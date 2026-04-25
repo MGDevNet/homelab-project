@@ -1,0 +1,39 @@
+#cloud-config
+# Homelab VM Cloud-Init User Data
+# Place this file at /var/lib/vz/snippets/userdata.yaml on ALL Proxmox nodes
+# Enable snippets: pvesm set local --content vztmpl,iso,backup,snippets
+
+users:
+  - name: admin
+    groups: [sudo, users]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+
+chpasswd:
+  users:
+    - name: admin
+      password: PUTPASSWD_HERE
+      type: text
+    - name: root
+      password: PUTPASSWD_HERE
+      type: text
+  expire: false
+
+ssh_pwauth: true
+
+packages:
+  - qemu-guest-agent
+  - curl
+  - wget
+  - vim
+  - net-tools
+
+runcmd:
+  - systemctl enable qemu-guest-agent
+  - systemctl start qemu-guest-agent
+  - echo "admin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/admin
+  - chmod 440 /etc/sudoers.d/admin
+  - echo "PasswordAuthentication yes" > /etc/ssh/sshd_config.d/99-pwauth.conf
+  - echo "PermitRootLogin yes" >> /etc/ssh/sshd_config.d/99-pwauth.conf
+  - systemctl restart ssh

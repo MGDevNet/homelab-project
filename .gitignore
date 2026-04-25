@@ -1,0 +1,16 @@
+# Ignore files with sensitive data
+*.key
+*.pem
+*.crt
+passwords.txt
+secrets.env
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
